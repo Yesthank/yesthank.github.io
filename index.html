@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7반 GAMES</title>
+    <style>
+        /* --- 디자인 설정 (네온 테마) --- */
+        :root {
+            --bg-color: #0f0f12;
+            --card-bg: #1e1e26;
+            --accent-color: #00f2ff;
+            --hover-color: #7000ff;
+            --text-color: #ffffff;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Pretendard', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            
+            /* [추가] 텍스트 드래그 및 선택 방지 */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin: 0 0 40px 0;
+            letter-spacing: -1px;
+            text-shadow: 0 0 10px rgba(0, 242, 255, 0.5),
+                         0 0 20px rgba(0, 242, 255, 0.3);
+            background: linear-gradient(to right, #fff, var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .link-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .link-item {
+            background: var(--card-bg);
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .link-item:hover {
+            transform: translateY(-4px) scale(1.02);
+            background: linear-gradient(135deg, var(--card-bg), var(--hover-color));
+            box-shadow: 0 10px 25px rgba(112, 0, 255, 0.4);
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .link-item:active {
+            transform: scale(0.96);
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            background: #ff0055;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 8px;
+            position: absolute;
+            right: 20px;
+            box-shadow: 0 2px 5px rgba(255, 0, 85, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>7반 GAMES</h1>
+        <div class="link-list" id="link-container"></div>
+    </div>
+
+    <script>
+        // ==========================================
+        // [설정] 게임 목록
+        // ==========================================
+        const myLinks = [
+            { title: "🎡 점심뭐먹", url: "./d", badge: "HOT" },
+            { title: "🎰 강원랜드", url: "./gland", badge: "NEW" },
+            { title: "💪 근육키우기", url: "./muscle", badge: "NEW" },
+        ];
+
+        // ==========================================
+        // [보안] 우클릭, F12, F11, 소스보기 차단 코드
+        // ==========================================
+        
+        // 1. 우클릭 차단
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            // alert('보안상 우클릭이 금지되어 있습니다.'); // 필요하면 주석 해제
+        });
+
+        // 2. 단축키 차단 (F12, F11, Ctrl+U 등)
+        document.addEventListener('keydown', function(e) {
+            // F12 (개발자 도구)
+            if (e.key === 'F12') {
+                e.preventDefault();
+            }
+            // F11 (전체화면)
+            if (e.key === 'F11') {
+                e.preventDefault();
+            }
+            // Ctrl+Shift+I (개발자 도구) / Ctrl+Shift+J (콘솔) / Ctrl+Shift+C (요소 선택)
+            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) {
+                e.preventDefault();
+            }
+            // Ctrl+U (소스 보기)
+            if (e.ctrlKey && (e.key === 'U' || e.key === 'u')) {
+                e.preventDefault();
+            }
+        });
+
+        // ==========================================
+        // [작동 코드] 링크 자동 생성 (로컬/웹 자동 감지)
+        // ==========================================
+        const container = document.getElementById('link-container');
+        const isLocal = window.location.protocol === 'file:';
+
+        myLinks.forEach(link => {
+            const aTag = document.createElement('a');
+            aTag.className = 'link-item';
+            
+            if (!link.url.startsWith('http') && isLocal) {
+                aTag.href = link.url + "/index.html";
+            } else {
+                aTag.href = link.url;
+            }
+
+            if (link.url.startsWith('http')) {
+                aTag.target = '_blank';
+            }
+
+            let innerContent = `<span>${link.title}</span>`;
+            if (link.badge) {
+                innerContent += `<span class="badge">${link.badge}</span>`;
+            }
+            aTag.innerHTML = innerContent;
+
+            container.appendChild(aTag);
+        });
+    </script>
+</body>
+</html>
